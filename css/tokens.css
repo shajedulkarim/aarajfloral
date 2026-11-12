@@ -25,10 +25,10 @@
   --st-done: #4A4548;      --st-done-bg: #E6E0DB;
   --st-cancel: #B3261E;    --st-cancel-bg: #F8DAD6;
 
-  --font-head: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
-  --font-body: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-head-ar: "Noto Naskh Arabic", "Cormorant Garamond", serif;
-  --font-body-ar: "Noto Sans Arabic", "Hanken Grotesk", system-ui, sans-serif;
+  --font-head: "Bodoni Moda", "Bodoni 72", Didot, Georgia, serif;
+  --font-body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-head-ar: "Amiri", "Noto Naskh Arabic", serif;
+  --font-body-ar: "Noto Sans Arabic", "Figtree", system-ui, sans-serif;
 
   --radius: 6px;
   --radius-lg: 12px;

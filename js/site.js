@@ -32,7 +32,7 @@
       reopenToday: "Closed for now. Reopens today at ", tomorrow: "tomorrow",
       rating: "Rated ", ratingOf: " from ", ratingReviews: " reviews",
       waIntro: "Hello Aaraj, I would like to order:", waName: "Name", waPhone: "Phone", waNote: "Notes", waTotal: "Total",
-      waPickup: "Pickup", waDelivery: "Delivery", waNeedItems: "Add at least one item first.",
+      waPickup: "Pickup", waDelivery: "Delivery", waNeedItems: "Add at least one item first.", sentMsg: "WhatsApp should open with your order. If it did not, ", sentLink: "tap here to open it", sentNew: "Start a new order",
       toastLogFail: "Order sent to WhatsApp. We could not save it to our system, please keep the chat open.",
       days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
     },
@@ -62,7 +62,7 @@
       reopenToday: "مغلق حاليًا. نفتح اليوم الساعة ", tomorrow: "غدًا",
       rating: "التقييم ", ratingOf: " من ", ratingReviews: " تقييم",
       waIntro: "مرحبًا أعراج، أود طلب:", waName: "الاسم", waPhone: "الهاتف", waNote: "ملاحظات", waTotal: "المجموع",
-      waPickup: "استلام", waDelivery: "توصيل", waNeedItems: "أضف عنصرًا واحدًا على الأقل.",
+      waPickup: "استلام", waDelivery: "توصيل", waNeedItems: "أضف عنصرًا واحدًا على الأقل.", sentMsg: "يفترض أن يفتح واتساب مع طلبك. إن لم يفتح، ", sentLink: "اضغط هنا لفتحه", sentNew: "ابدأ طلبًا جديدًا",
       toastLogFail: "تم فتح واتساب. تعذر حفظ الطلب في نظامنا، يرجى إبقاء المحادثة مفتوحة.",
       days: ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"]
     }
@@ -240,7 +240,7 @@
     var shop = photosBy("shop")[0];
     $("#shopFig").innerHTML = shop ? '<img src="' + esc(shop.url) + '" alt="' + esc(pick(shop, "alt")) + '" loading="lazy" width="600" height="450">' : "";
     var wa = "https://wa.me/" + (c.whatsapp || CFG.whatsapp);
-    $("#heroWa").href = wa; $("#cWa").href = wa; $("#cWa").textContent = c.phone; $("#cCall").href = "tel:" + String(c.phone).replace(/\s/g, ""); $("#cCall").textContent = c.phone;
+    $("#heroWa").href = wa; $("#cWa").href = wa; $("#cWa").textContent = c.phone; $("#qWa").href = wa; $("#qCall").href = "tel:" + String(c.phone).replace(/\s/g, ""); $("#cCall").href = "tel:" + String(c.phone).replace(/\s/g, ""); $("#cCall").textContent = c.phone;
     $("#cIg").href = "https://www.instagram.com/" + c.instagram + "/"; $("#cIg").textContent = "@" + c.instagram;
     renderHours();
   }
@@ -271,6 +271,12 @@
     var rows = cartLines().map(function (l) { return { id: l.item.id, name: l.item.name_en, qty: l.qty, price: Number(l.item.price) }; });
     return withTimeout(c.from("orders").insert({ customer_name: f.name || null, phone: f.phone || null, items: rows, total: total, fulfilment: f.fulfil, note: f.note || null, lang: state.lang }).then(function (r) { if (r.error) throw r.error; }), 5000);
   }
+  function bump() { var b = $("#orderOpen"); if (!b) return; b.classList.remove("bump"); void b.offsetWidth; b.classList.add("bump"); }
+  function showSent(url) {
+    var n = $("#sentNote"); n.hidden = false;
+    n.innerHTML = esc(t("sentMsg")) + '<a href="' + esc(url) + '" target="_blank" rel="noopener">' + esc(t("sentLink")) + '</a><br><button type="button" class="btn btn-line btn-sm" id="newOrder">' + esc(t("sentNew")) + "</button>";
+    $("#newOrder").addEventListener("click", function () { state.cart = {}; n.hidden = true; $("#orderForm").reset(); syncCards(); renderOrder(); openOrder(false); });
+  }
   function submitOrder(e) {
     e.preventDefault();
     if (!cartLines().length) { toast(t("waNeedItems")); return; }
@@ -281,6 +287,7 @@
     /* open WhatsApp synchronously so popup blockers allow it; logging never blocks it */
     var w = window.open(url, "_blank", "noopener");
     if (!w) window.location.href = url;
+    showSent(url);
     logOrder(f, m.total).catch(function () { if (state.source === "database") toast(t("toastLogFail")); });
   }
 
@@ -292,7 +299,7 @@
         var id = b.getAttribute("data-id"), q = state.cart[id] || 0;
         q += b.getAttribute("data-act") === "inc" ? 1 : -1;
         if (q <= 0) delete state.cart[id]; else state.cart[id] = Math.min(q, 99);
-        syncCards(); renderOrder();
+        syncCards(); renderOrder(); bump();
         if (!Object.keys(state.cart).length) openOrder(false);
         return;
       }
@@ -305,10 +312,11 @@
     $("#orderClose").addEventListener("click", function () { openOrder(false); });
     document.addEventListener("keydown", function (e) { if (e.key === "Escape") openOrder(false); });
     $("#orderForm").addEventListener("submit", submitOrder);
+    (function () { var y0 = null, o = $("#order"); o.addEventListener("touchstart", function (e) { if (o.scrollTop <= 0 && e.target.closest(".order-head,.grabber")) y0 = e.touches[0].clientY; else y0 = null; }, { passive: true }); o.addEventListener("touchmove", function (e) { if (y0 === null) return; var d = e.touches[0].clientY - y0; if (d > 0) o.style.transform = "translateY(" + d + "px)"; }, { passive: true }); o.addEventListener("touchend", function (e) { if (y0 === null) return; var d = e.changedTouches[0].clientY - y0; o.style.transform = ""; y0 = null; if (d > 90) openOrder(false); }); })();
     $("#langBtn").addEventListener("click", function () { state.lang = state.lang === "ar" ? "en" : "ar"; try { localStorage.setItem("aaraj_lang", state.lang); } catch (e) {} applyLang(); });
     window.addEventListener("resize", renderOrder);
     var io = "IntersectionObserver" in window ? new IntersectionObserver(function (es) {
-      es.forEach(function (en) { if (en.isIntersecting) { $$(".cats a").forEach(function (a) { a.classList.toggle("on", a.getAttribute("data-cat") === en.target.id.replace("cat-", "")); }); } });
+      es.forEach(function (en) { if (en.isIntersecting) { $$(".cats a").forEach(function (a) { var on = a.getAttribute("data-cat") === en.target.id.replace("cat-", ""); a.classList.toggle("on", on); if (on) { var c = a.parentNode; if (c.scrollWidth > c.clientWidth) c.scrollTo({ left: a.offsetLeft - c.clientWidth / 2 + a.offsetWidth / 2, behavior: "smooth" }); } }); } });
     }, { rootMargin: "-30% 0px -60% 0px" }) : null;
     new MutationObserver(function () { if (io) $$(".cat-block").forEach(function (s) { io.observe(s); }); }).observe($("#menuList"), { childList: true });
   }

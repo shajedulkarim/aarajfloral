@@ -253,9 +253,36 @@ async function adminSuite(b) {
   await shot(p, 'admin-desktop-orders-error'); await p.close();
 }
 
+async function responsiveSuite(b) {
+  console.log('\nRESPONSIVE: overflow at many widths, touch targets on phone');
+  const widths = [320, 360, 390, 414, 768, 1024, 1280, 1440, 1920];
+  for (const w of widths) {
+    let p = await open(b, BASE, w, 800);
+    check(`site ${w}px: no horizontal overflow`, await p.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 0), await p.evaluate(() => document.documentElement.scrollWidth));
+    await p.close();
+    p = await open(b, BASE + 'admin/', w, 800, null, OWNER); await sleep(500);
+    let ok = true, where = [];
+    for (const t of ['orders', 'menu', 'photos', 'insights', 'settings']) { await p.evaluate(t => { location.hash = '#/' + t; }, t); await sleep(450); const o = await p.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth); if (!o) { ok = false; where.push(t); } }
+    check(`admin ${w}px: no horizontal overflow on all tabs`, ok, where); await p.close();
+  }
+  // touch targets on phone (public)
+  const p = await open(b, BASE, 390, 844);
+  const small = await p.evaluate(() => {
+    const out = []; const sel = 'button, a.btn, .cats a, .nav a, input:not([type=radio]):not([type=hidden]), select, textarea, .seg span, .contact-list a, .staff-link, .gallery button';
+    document.querySelectorAll(sel).forEach(e => { const r = e.getBoundingClientRect(); const cs = getComputedStyle(e); if (r.width === 0 || r.height === 0 || cs.visibility === 'hidden' || cs.display === 'none' || e.closest('[hidden]') || e.closest('.order:not(.open)') ) return; if (r.height < 43.5 || r.width < 43.5) out.push((e.id || e.className || e.tagName) + ' ' + Math.round(r.width) + 'x' + Math.round(r.height)); });
+    return out;
+  });
+  check('phone: every visible public control is at least 44x44', small.length === 0, small.slice(0, 8));
+  await p.close();
+  const q = await open(b, BASE + 'admin/', 390, 844, null, OWNER); await sleep(500);
+  const small2 = await q.evaluate(() => { const out = []; document.querySelectorAll('button, a.btn, select, input:not([type=checkbox]):not([type=hidden])').forEach(e => { const r = e.getBoundingClientRect(), cs = getComputedStyle(e); if (!r.width || cs.display === 'none' || e.closest('.side')) return; if (r.height < 43.5) out.push((e.id || e.className || e.tagName) + ' ' + Math.round(r.width) + 'x' + Math.round(r.height)); }); return out; });
+  check('phone admin (orders): controls are at least 44px tall', small2.length === 0, small2.slice(0, 8));
+  await q.close();
+}
+
 (async () => {
   const b = await puppeteer.launch({ executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', headless: 'new', protocolTimeout: 60000, args: ['--autoplay-policy=no-user-gesture-required'] });
-  try { if (!ONLY || ONLY === 'public') await publicSuite(b); if (!ONLY || ONLY === 'admin') await adminSuite(b); }
+  try { if (!ONLY || ONLY === 'public') await publicSuite(b); if (!ONLY || ONLY === 'admin') await adminSuite(b); if (!ONLY || ONLY === 'responsive') await responsiveSuite(b); }
   catch (e) { fail++; failures.push('RUNNER: ' + e.message); console.log('RUNNER ERROR', e.stack); }
   await b.close();
   console.log(`\n${pass} passed, ${fail} failed`); if (fail) console.log('Failures:\n - ' + failures.join('\n - '));

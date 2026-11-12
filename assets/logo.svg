@@ -5,6 +5,6 @@
     <path d="M30 62c3 4 9 6 13 3"/>
     <path d="M24 72c10 3 20 1 28-6"/>
   </g>
-  <text x="66" y="72" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif" font-size="62" font-weight="600" fill="#1B1A1C">A</text>
-  <text x="60" y="95" text-anchor="middle" font-family="Hanken Grotesk, Arial, sans-serif" font-size="7.5" letter-spacing="3" fill="#1B1A1C">AARAJ</text>
+  <text x="66" y="72" text-anchor="middle" font-family="Bodoni 72, Didot, Bodoni MT, Georgia, serif" font-size="62" font-weight="600" fill="#1B1A1C">A</text>
+  <text x="60" y="95" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="7.5" letter-spacing="3" fill="#1B1A1C">AARAJ</text>
 </svg>

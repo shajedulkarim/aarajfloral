@@ -124,9 +124,9 @@
       st.host = host;
       var sp = A.sound.prefs();
       host.innerHTML = '<div class="page-head"><div><h2>Orders</h2><p class="muted small" id="ordCount"></p></div><div class="tools">' +
-        '<button type="button" class="btn btn-sm" id="ordSound" aria-pressed="' + sp.on + '">' + A.icon("sound") + '<span>Sound ' + (sp.on ? "on" : "off") + "</span></button>" +
-        '<button type="button" class="btn btn-sm" id="ordPrint">' + A.icon("print") + "Print list</button>" +
-        '<button type="button" class="btn btn-sm" id="ordCsv">' + A.icon("download") + "Export CSV</button></div></div>" +
+        '<button type="button" class="btn btn-sm ico" id="ordSound" aria-label="Toggle sound" aria-pressed="' + sp.on + '">' + A.icon("sound") + '<span>Sound ' + (sp.on ? "on" : "off") + "</span></button>" +
+        '<button type="button" class="btn btn-sm ico" id="ordPrint" aria-label="Print list">' + A.icon("print") + "<span>Print list</span></button>" +
+        '<button type="button" class="btn btn-sm ico" id="ordCsv" aria-label="Export CSV">' + A.icon("download") + "<span>Export CSV</span></button></div></div>" +
         '<div id="ordBanner"></div><div class="toolbar"><label class="search"><span class="sr">Search orders</span>' + A.icon("search") + '<input type="search" id="ordQ" placeholder="Search name, phone, item or number" value="' + esc(st.q) + '"></label>' +
         '<label><span class="sr">Date range</span><select id="ordRange" aria-label="Date range"><option value="today">Today</option><option value="7">Last 7 days</option><option value="30">Last 30 days</option><option value="all">All time</option></select></label></div>' +
         '<div class="chips" id="ordChips" style="margin-bottom:14px" role="group" aria-label="Filter by status"></div><div id="ordersBody"><p class="muted">Loading</p></div>';
