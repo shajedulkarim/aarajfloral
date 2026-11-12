@@ -1,0 +1,38 @@
+/* Aaraj design tokens. Every colour in the site and admin comes from here. */
+:root {
+  /* Core palette */
+  --ink: #1B1A1C;          /* dark anchor */
+  --rose: #8E2F4B;         /* main accent */
+  --bg: #F7F1EC;           /* warm neutral background */
+  --alert: #B3261E;        /* alert / destructive */
+
+  /* Derived, all checked against --bg or their own pair for 4.5:1 text contrast */
+  --surface: #FFFDFB;
+  --on-ink: #F7F1EC;
+  --on-rose: #FFFFFF;
+  --on-alert: #FFFFFF;
+  --muted: #5B5558;
+  --line: #E2D8CF;
+  --line-strong: #CDBFB3;
+  --rose-tint: #F3DDE3;
+  --ink-tint: #ECE5DF;
+  --focus: #1B1A1C;
+
+  /* Order status pairs (text on tint) */
+  --st-new: #8E2F4B;       --st-new-bg: #F3DDE3;
+  --st-prep: #7A4E00;      --st-prep-bg: #FBEBC8;
+  --st-ready: #1D6A43;     --st-ready-bg: #D9EEDF;
+  --st-done: #4A4548;      --st-done-bg: #E6E0DB;
+  --st-cancel: #B3261E;    --st-cancel-bg: #F8DAD6;
+
+  --font-head: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+  --font-body: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-head-ar: "Noto Naskh Arabic", "Cormorant Garamond", serif;
+  --font-body-ar: "Noto Sans Arabic", "Hanken Grotesk", system-ui, sans-serif;
+
+  --radius: 6px;
+  --radius-lg: 12px;
+  --shadow: 0 1px 2px rgba(27, 26, 28, .06), 0 8px 24px rgba(27, 26, 28, .08);
+  --gutter: 16px;
+  --tap: 44px;
+}
